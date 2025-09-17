@@ -4,8 +4,8 @@ html {
 
 body {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 5em;
-  margin: 2em;
+  font-size: clamp(14px, 1.6vw, 16px); /* 画面幅に応じて可変 */
+  margin: 1rem;
   background-color: rgb(241, 241, 226);
   color: #333;
 }
@@ -51,12 +51,17 @@ button:hover {
   font-size: 1em;
 }
 
-.chartContainer{
+#chartContainer{
   border: 1px solid #ddd; 
   border-radius: 10px; 
   padding: 12px; 
   margin: 2em 0;
   font-size: 2em;
+}
+
+#realtimeChart {
+  width: 100% !important;
+  height: 55vh !important;
 }
 
 .row { 
