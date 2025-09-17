@@ -9,12 +9,14 @@ let measureStartEpochMs = null;   // 計測(通知購読開始)時刻
 const receivedData = [];          // CSV用
 let chart;
 
+let intervalId = null;
+let latestSample = null;
+
 // UI要素の取得
 const connectButton = document.getElementById("connectButton");
 const disconnectButton = document.getElementById("disconnectButton");
 const measureButton = document.getElementById("measureButton");
 const downloadButton = document.getElementById("downloadButton");
-const resetButton = document.getElementById("resetButton");
 const statusSpan = document.getElementById("status");
 const deviceNameSpan = document.getElementById("deviceName");
 
@@ -95,6 +97,14 @@ function handleNotification(event) {
   const amb = value.getFloat32(0, true);
   const obj = value.getFloat32(4, true);
   const sensorElapsedMs = value.getUint32(8, true);
+
+  latestSample = { amb, obj, sensorElapsedMs, recvEpochMs };
+}
+
+function processLatestSample() {
+  if (!latestSample) return; // まだサンプルが来てない
+
+  const { amb, obj, sensorElapsedMs, recvEpochMs } = latestSample;
   const sensorElapsedS = sensorElapsedMs / 1000;
 
   // 計測開始からの経過時間（クライアント側）
@@ -121,6 +131,10 @@ function handleNotification(event) {
     recv_epoch_ms: recvEpochMs,
     recv_iso: new Date(recvEpochMs).toISOString()
   });
+  // 初回受信でダウンロードを有効化
+  if (receivedData.length === 1) {
+    downloadButton.disabled = false;
+  }
 }
 
 function clearDataAndChart() {
@@ -137,6 +151,8 @@ function clearDataAndChart() {
     document.getElementById("recvTimeValue").textContent = "-";
     measureStartEpochMs = null;
     measureButton.textContent = "計測開始";
+
+    downloadButton.disabled = true;
 }
 
 connectButton.addEventListener("click", async () => {
@@ -156,8 +172,11 @@ connectButton.addEventListener("click", async () => {
     disconnectButton.disabled = false;
     measureButton.disabled = false;
     measureButton.textContent = "計測開始";
+    downloadButton.disabled = true; 
 
     device.addEventListener("gattserverdisconnected", () => {
+      try { characteristic?.removeEventListener("characteristicvaluechanged", handleNotification); } catch(_) {}
+      if (intervalId) { clearInterval(intervalId); intervalId = null; }  
       statusSpan.textContent = "未接続";
       deviceNameSpan.textContent = "-";
       connectButton.disabled = false;
@@ -180,7 +199,7 @@ disconnectButton.addEventListener("click", async() => {
   if (device && device.gatt.connected) {
     if (measureStartEpochMs) {
       // 計測中の場合は停止
-      await characteristic.stopNotifications();
+      try { await characteristic.stopNotifications(); } catch(_) {}
     }
     device.gatt.disconnect();
   }
@@ -194,16 +213,30 @@ measureButton.addEventListener("click", async () => {
 
   if (measureStartEpochMs) {
     // 計測停止
-    await characteristic.stopNotifications();
-    characteristic.removeEventListener("characteristicvaluechanged", handleNotification);
+    try { await characteristic.stopNotifications(); } catch(_) {}
+    try { characteristic.removeEventListener("characteristicvaluechanged", handleNotification); } catch(_) {}
+    clearInterval(intervalId);
+    intervalId = null;
     measureStartEpochMs = null;
     measureButton.textContent = "計測開始";
     console.log("計測停止");
   } else {
     // 計測開始
+    receivedData.length = 0;
+    if (chart) {
+      chart.data.labels = [];
+      chart.data.datasets[0].data = [];
+      chart.data.datasets[1].data = [];
+      chart.update();
+    }
+    try { characteristic.removeEventListener("characteristicvaluechanged", handleNotification); } catch(_) {}
     characteristic.addEventListener("characteristicvaluechanged", handleNotification);
     await characteristic.startNotifications();
+
     measureStartEpochMs = Date.now();
+    intervalId = setInterval(processLatestSample, 1000);
+    connectButton.disabled = true;      // ★計測中は再接続禁止
+    downloadButton.disabled = true;     // ★データが来るまで無効化
     measureButton.textContent = "計測停止";
     console.log("計測開始");
   }
@@ -228,5 +261,3 @@ downloadButton.addEventListener("click", () => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
-
-resetButton.addEventListener("click", clearDataAndChart);
