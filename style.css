@@ -59,10 +59,6 @@ button:hover {
   margin: 1em 0;
 }
 
-#realtimeChart {
-  width: 100% !important;
-  height: 55vh !important;
-}
 
 .row { 
   margin: 6px 0; 
