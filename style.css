@@ -23,8 +23,9 @@ h1 {
 }
 
 button {
-  padding: 0.6em 1.2em;
+  padding: 0.6em 1em;
   margin-right: 0.8em;
+  margin-bottom: 0.8em;
   border: none;
   border-radius: 6px;
   background-color: #46a15f;
@@ -55,8 +56,7 @@ button:hover {
   border: 1px solid #ddd; 
   border-radius: 10px; 
   padding: 12px; 
-  margin: 2em 0;
-  font-size: 2em;
+  margin: 1em 0;
 }
 
 #realtimeChart {
