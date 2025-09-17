@@ -53,18 +53,35 @@ function updateChart(amb, obj, elapsedS) {
         animation: {
           duration: 0 // アニメーションを無効化
         },
+         plugins: {
+          legend: {
+            labels: {
+              font: {
+                size: 22   // 凡例の文字サイズ
+              }
+            }
+          }
+        },
         scales: {
           x: {
             title: {
               display: true,
-              text: "経過時間 (s)"
+              text: "経過時間 (s)",
+              font: { size: 22 }
+            },
+            ticks: {
+              font: { size: 18 }  // X軸目盛り
             }
           },
           y: {
             beginAtZero: false,
             title: {
               display: true,
-              text: "温度 (°C)"
+              text: "温度 (°C)",
+              font: { size: 22 }
+            },
+            ticks: {
+              font: { size: 18 }  // X軸目盛り
             }
           }
         }
