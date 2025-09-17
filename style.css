@@ -1,0 +1,66 @@
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 2em;
+  background-color: rgb(241, 241, 226);
+  color: #333;
+}
+
+h1 {
+  color: #46a15f;;
+  margin-bottom: 1em;
+}
+
+.controls {
+  margin-bottom: 1.5em;
+  display: flex; 
+  gap: 8px; 
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 0.6em 1.2em;
+  margin-right: 0.8em;
+  border: none;
+  border-radius: 6px;
+  background-color: #46a15f;
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fa3;
+}
+
+#dataDisplay {
+  margin-top: 1em;
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  max-width: 400px;
+}
+
+#dataDisplay p {
+  margin: 0.4em 0;
+  font-size: 1.1em;
+}
+
+.chartContainer{
+  border: 1px solid #ddd; 
+  border-radius: 8px; 
+  padding: 12px; 
+  margin: 15px 0;
+}
+
+.row { 
+  margin: 6px 0; 
+}
+
+.val { 
+  font-variant-numeric: tabular-nums; 
+}

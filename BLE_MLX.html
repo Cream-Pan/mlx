@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MLX90632 BLE</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <h1>MLX センサデータ</h1>
+    <div id="controls">
+      <button id="connectButton">BLEデバイスに接続</button>
+      <button id="disconnectButton" disabled>接続解除</button>
+      <button id="measureButton" disabled>計測開始</button>
+      <button id="downloadButton">CSVダウンロード</button>
+      <button id="resetButton">データリセット</button>
+    </div>
+
+    <div id="statusDisplay">
+      <div class="row">接続状態: <span id="status">未接続</span></div>
+      <div class="row">デバイス名: <span id="deviceName">-</span></div>
+    </div>
+
+    <div id="dataDisplay">
+      <div class="row">Ambient (°C): <span id="ambValue" class="val">-</span></div>
+      <div class="row">Object (°C): <span id="objValue" class="val">-</span></div>
+      <div class="row">経過時間(計測): <span id="timeValue" class="val">-</span> s</div>
+      <div class="row">受信時刻(クライアント): <span id="recvTimeValue" class="val">-</span></div>
+    </div>
+
+    <div id="chartContainer">
+      <canvas id="realtimeChart"></canvas>
+    </div>
+
+    <script src="BLE_MLX.js"></script>
+  </body>
+</html>
