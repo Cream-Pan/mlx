@@ -27,6 +27,20 @@ function formatLocalTimeWithMs(epochMs) {
        + `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(),3)}`;
 }
 
+function formatLocalTimeForCSV(epochMs) {
+  const d = new Date(epochMs);
+  const pad = (n, w=2) => String(n).padStart(w, "0");
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = pad(d.getHours());
+  const minutes = pad(d.getMinutes());
+  const seconds = pad(d.getSeconds());
+  const milliseconds = pad(d.getMilliseconds(), 3);
+  // ISO 8601形式のローカルタイム文字列を生成
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+
 function updateChart(amb, obj, elapsedS) {
   const maxDataPoints = 50;
 
@@ -129,7 +143,7 @@ function processLatestSample() {
     sensor_elapsed_s: sensorElapsedS,
     measure_elapsed_s: measureElapsedS,
     recv_epoch_ms: recvEpochMs,
-    recv_iso: new Date(recvEpochMs).toISOString()
+    recv_jst: formatLocalTimeForCSV(recvEpochMs)
   });
   // 初回受信でダウンロードを有効化
   if (receivedData.length === 1) {
@@ -247,9 +261,9 @@ downloadButton.addEventListener("click", () => {
     alert("ダウンロードするデータがありません．");
     return;
   }
-  let csv = "Ambient_C,Object_C,SensorElapsed_ms,SensorElapsed_s,MeasureElapsed_s,RecvEpoch_ms,RecvISO\n";
+  let csv = "Ambient_C,Object_C,SensorElapsed_ms,SensorElapsed_s,MeasureElapsed_s,RecvEpoch_ms,RecvJST\n";
   for (const r of receivedData) {
-    csv += `${r.amb},${r.obj},${r.sensor_elapsed_ms},${r.sensor_elapsed_s},${r.measure_elapsed_s},${r.recv_epoch_ms},${r.recv_iso}\n`;
+    csv += `${r.amb},${r.obj},${r.sensor_elapsed_ms},${r.sensor_elapsed_s},${r.measure_elapsed_s},${r.recv_epoch_ms},${r.recv_jst}\n`;
   }
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
