@@ -1,7 +1,7 @@
 // 設定
 const SERVICE_UUID = "4a5197ff-07ce-499e-8d37-d3d457af549a";
 const CHARACTERISTIC_UUID = "fedcba98-7654-3210-fedc-ba9876543210";
-const DEVICE_NAME = "MLX90632 Sensor";
+const DEVICE_NAME = "MLX R";
 
 // 状態
 let device, characteristic, service;
@@ -275,3 +275,4 @@ downloadButton.addEventListener("click", () => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 });
+
